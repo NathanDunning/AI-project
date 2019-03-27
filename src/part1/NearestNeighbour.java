@@ -34,10 +34,28 @@ public class NearestNeighbour {
     public static void outputToFile() {
         try {
             PrintWriter writer = new PrintWriter("Prediction data.txt", "UTF-8");
-
+            int count = 1;
+            int correct = 0;
             for (Iris iris : testData) {
                 writer.println(iris.getPrediction());
+                if(count >= 1 && count <= 25) {
+                    if (iris.getPrediction().equals("Iris-setosa")) {
+                        correct++;
+                    }
+                }
+                if(count >= 26 && count <= 50){
+                    if(iris.getPrediction().equals("Iris-versicolor")){
+                        correct++;
+                    }
+                }
+                if(count >= 51 && count <= 75){
+                    if(iris.getPrediction().equals("Iris-virginica")){
+                        correct++;
+                    }
+                }
+                count++;
             }
+            writer.println("Accuracy = " + correct +"/75");
 
             writer.close();
         } catch (FileNotFoundException e) {
@@ -68,20 +86,23 @@ public class NearestNeighbour {
 
         try {
             //Reading the data
-            //TODO: Too many iterations
             BufferedReader in = new BufferedReader(new FileReader(file));
             String currentLine;
             while((currentLine = in.readLine()) != null) {
                 String[] data = currentLine.split("\\s+");
+                if(data[0].isEmpty()) {break;}
                 double sepalLength = Double.parseDouble(data[0]);
                 if(sepalLength > SLMax) {SLMax = sepalLength;}
                 if(sepalLength < SLMin) {SLMin = sepalLength;}
+
                 double sepalWidth = Double.parseDouble(data[1]);
                 if(sepalWidth > SWMax) {SWMax = sepalWidth;}
                 if(sepalWidth < SWMin) {SWMin = sepalWidth;}
+
                 double petalLength = Double.parseDouble(data[2]);
                 if(petalLength > PLMax) {PLMax = petalLength;}
                 if(petalLength < PLMin) {PLMin = petalLength;}
+
                 double petalWidth = Double.parseDouble(data[3]);
                 if(petalWidth > PWMax) {PWMax = petalWidth;}
                 if(petalWidth < PWMin) {PWMin = petalWidth;}
@@ -96,6 +117,8 @@ public class NearestNeighbour {
                 pLengthRange = PLMax - PLMin;
                 pWidthRange = PWMax - PWMin;
             }
+
+            in.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -175,6 +198,9 @@ public class NearestNeighbour {
             }
             if ((virginica > setosa) && (virginica > versicolor)){
                 testIris.setPrediction("Iris-virginica");
+            }
+            if ((setosa == versicolor) && (versicolor == virginica)) {
+                testIris.setPrediction("Iris-setosa");
             }
         }
 
