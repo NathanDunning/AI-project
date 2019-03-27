@@ -18,7 +18,7 @@ public class NearestNeighbour {
     private static double pLengthRange;
     private static double pWidthRange;
 
-    private static int k;
+    private static int k = 3;
 
 
 
@@ -91,6 +91,7 @@ public class NearestNeighbour {
             while((currentLine = in.readLine()) != null) {
                 String[] data = currentLine.split("\\s+");
                 if(data[0].isEmpty()) {break;}
+
                 double sepalLength = Double.parseDouble(data[0]);
                 if(sepalLength > SLMax) {SLMax = sepalLength;}
                 if(sepalLength < SLMin) {SLMin = sepalLength;}
@@ -140,7 +141,7 @@ public class NearestNeighbour {
             if (args[0] == null || args[1] == null) {
                 throw new FileNotFoundException();
             }
-            if ((!args[0].contains("test")) && (!args[1].contains("training"))) {
+            if ((!args[1].contains("test")) && (!args[0].contains("training"))) {
                 throw new AssertionError();
             }
         } catch (FileNotFoundException e) {
@@ -150,11 +151,8 @@ public class NearestNeighbour {
         }
 
         //Reads the file
-        testData = readData(args[0]);
-        trainingData = readData(args[1]);
-
-        //Initialise k
-        k = 3;
+        testData = readData(args[1]);
+        trainingData = readData(args[0]);
 
         //Finding the nearest neighbours
         for (Iris testIris : testData) {
