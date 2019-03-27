@@ -86,7 +86,7 @@ public class NearestNeighbour {
 
         try {
             //Reading the data
-            BufferedReader in = new BufferedReader(new FileReader(file));
+            BufferedReader in = new BufferedReader(new FileReader("./data/part1/" +file));
             String currentLine;
             while((currentLine = in.readLine()) != null) {
                 String[] data = currentLine.split("\\s+");
