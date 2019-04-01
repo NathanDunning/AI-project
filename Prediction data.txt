@@ -25,7 +25,7 @@ Iris-setosa
 Iris-setosa
 Iris-versicolor
 Iris-versicolor
-Iris-versicolor
+Iris-virginica
 Iris-versicolor
 Iris-versicolor
 Iris-versicolor
@@ -50,7 +50,7 @@ Iris-versicolor
 Iris-versicolor
 Iris-virginica
 Iris-virginica
-Iris-virginica
+Iris-versicolor
 Iris-virginica
 Iris-virginica
 Iris-virginica
@@ -61,6 +61,7 @@ Iris-versicolor
 Iris-virginica
 Iris-virginica
 Iris-virginica
+Iris-versicolor
 Iris-virginica
 Iris-virginica
 Iris-virginica
@@ -71,6 +72,5 @@ Iris-virginica
 Iris-virginica
 Iris-virginica
 Iris-virginica
-Iris-virginica
-Iris-virginica
-Accuracy = 72/75
+Iris-versicolor
+Accuracy = 68/75

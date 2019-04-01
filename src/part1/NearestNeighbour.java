@@ -18,7 +18,7 @@ public class NearestNeighbour {
     private static double pLengthRange;
     private static double pWidthRange;
 
-    private static int k = 3;
+    private static int k = 1;
 
 
 
