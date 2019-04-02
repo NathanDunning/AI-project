@@ -1,9 +1,12 @@
 package part2;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.DoubleAdder;
 
 /**
  * Class for the decision tree
@@ -15,13 +18,47 @@ public class DecisionTree {
     protected static ArrayList<String> attNames;
     protected static Node root;
 
+    @SuppressWarnings("Duplicates")
     protected static Node buildTree(List<Instance> instances, List<String> attributes) {
         Node n = null;
 
-        //TODO: Base Cases + testing
         if (instances.isEmpty()) {
             //Return a leaf node containing the name and probability of the most
             //probable class across the whole dataset(i.e., the ‘‘baseline’’ predictor)
+            int live = 0;
+            int dead = 0;
+
+            //Calculating count
+            for (Instance i : allInstances) {
+                if (i.getCategory() == 0) {
+                    live++;
+                }
+                else {
+                    dead++;
+                }
+            }
+
+            //Return nodes based on number of count
+            if (live > dead) {
+                double probability = live/allInstances.size();
+                return new LeafNode(categoryNames.get(0), probability, live+dead);
+            }
+            else if (dead > live) {
+                double probability = dead/allInstances.size();
+                return new LeafNode(categoryNames.get(1), probability,live+dead);
+            }
+            else {
+                //Most impure (0.5)
+                //live == die
+                double rand = Math.random();
+                if (rand <= 0.4) {
+                    return new LeafNode(categoryNames.get(0), 0.5,live+dead);
+                }
+                else {
+                    return new LeafNode(categoryNames.get(1), 0.5,live+dead);
+                }
+            }
+
         }
         boolean pure = true;
         for (int i = 0; i < instances.size()-1; i++) {
@@ -33,11 +70,48 @@ public class DecisionTree {
         if (pure) {
             //Return a leaf node containing the name of the class of the instances
             //in the node and probability 1
+            if(instances.get(0).getCategory() == 0) {
+                return new LeafNode(categoryNames.get(0), 1.0, instances.size());
+            }
+            else {
+                return new LeafNode(categoryNames.get(1), 1.0, instances.size());
+            }
+
         }
         if (attributes.isEmpty()) {
             //Return a leaf node containing the name and probability of the
             //majority class of the instances in the node (choose randomly
             //if classes are equal)
+            int live = 0;
+            int dead = 0;
+
+            for (Instance i : instances) {
+                if (i.getCategory() == 0){
+                    live++;
+                }
+                else {
+                    dead++;
+                }
+            }
+
+            if (live > dead) {
+                double probability = live/instances.size();
+                return new LeafNode(categoryNames.get(0), probability,live+dead);
+            }
+            else if (dead > live) {
+                double probability = dead/instances.size();
+                return new LeafNode(categoryNames.get(1), probability, live+dead);
+            }
+            else {
+                double rand = Math.random();
+                if (rand <= 0.4) {
+                    return new LeafNode(categoryNames.get(0), 0.5, live+dead);
+                }
+                else {
+                    return new LeafNode(categoryNames.get(1), 0.5, live+dead);
+                }
+            }
+
         }
         else {
             //Find best attribute
@@ -49,7 +123,6 @@ public class DecisionTree {
             for (String s : attributes) {
                 Set<Instance> trueSet = new HashSet<>();
                 Set<Instance> falseSet = new HashSet<>();
-
                 //Adding data to the different sets based on if the attribute is true or false
                 for (Instance i : instances) {
                     if (i.getAtt(attributes.indexOf(s))) {
@@ -76,15 +149,18 @@ public class DecisionTree {
             //Build subtrees using the remaining attributes
             //Deleted best attribute and all data containing it
             ArrayList<Instance> newInstance = new ArrayList<>(instances);
-            ArrayList<String> newAttributes = new ArrayList<>(attributes);
+            ArrayList<String> newAttributesT = new ArrayList<>(attributes);
 
-            int removeIndex = newAttributes.indexOf(bestAtt);
-            attributes.remove(removeIndex);
+
+            int removeIndex = newAttributesT.indexOf(bestAtt);
+            newAttributesT.remove(removeIndex);
             for (Instance i : newInstance) {
                 i.vals.remove(removeIndex);
             }
 
-            n = new Node(bestAtt, buildTree(bestInstTrue, newAttributes), buildTree(bestInstFalse, newAttributes));
+            ArrayList<String> newAttributesF = new ArrayList<>(newAttributesT);
+
+            n = new DecisionNode(bestAtt, buildTree(bestInstTrue, newAttributesT), buildTree(bestInstFalse, newAttributesF));
 
         }
 
@@ -92,8 +168,50 @@ public class DecisionTree {
     }
 
     public static void main(String[] args) {
-        Helper.readDataFile("./data/part2/" + args[0]);
-        DecisionTree DT = new DecisionTree();
-        root = buildTree(allInstances, attNames);
+        if (args.length == 0) {
+            System.out.println("No files given, please specify data files");
+        }
+        if (args.length == 1) {
+            if (args[0].contains("training")){
+                Helper.readDataFile("./data/part2/" + args[0]);
+                root = buildTree(allInstances, attNames);
+                Helper.printTree(root);
+            }
+            else {
+                System.out.println("Please ensure first file contains 'training'");
+            }
+        }
+        if (args.length >= 2) {
+            if (args[0].contains("training")) {
+                if (args[1].contains("test")) {
+                    //Read Training File
+                    Helper.readDataFile("./data/part2/" + args[0]);
+                    root = buildTree(allInstances, attNames);
+
+                    //Read Test File
+                    try {
+                        BufferedReader in = Helper.testDataReader(args[1]);
+                        String currentLine = in.readLine();
+                        while (currentLine != null) {
+                            String[] splitLine = currentLine.split("\\t+");
+                            String category = splitLine[0];
+                            ArrayList<Boolean> entries = new ArrayList<>();
+
+                            for (int i = 1; i < 16; i++) {
+                                entries.add(Boolean.parseBoolean(splitLine[i]));
+                            }
+
+                            //TODO compare it with tree
+                            //TODO read next line
+                            //TODO or add to big list and read at once
+                            //TODO print output
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
     }
 }
