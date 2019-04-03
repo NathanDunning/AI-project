@@ -2,15 +2,12 @@ package part2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.DoubleAdder;
+import java.util.*;
 
 /**
  * Class for the decision tree
  */
+//286/370 Accuracy
 public class DecisionTree {
     //Fields
     protected static List<Instance> allInstances;
@@ -187,28 +184,44 @@ public class DecisionTree {
                     //Read Training File
                     Helper.readDataFile("./data/part2/" + args[0]);
                     root = buildTree(allInstances, attNames);
+                    Helper.printTree(root);
+                    System.out.println("\n");
 
                     //Read Test File
-                    try {
-                        BufferedReader in = Helper.testDataReader(args[1]);
-                        String currentLine = in.readLine();
-                        while (currentLine != null) {
-                            String[] splitLine = currentLine.split("\\t+");
-                            String category = splitLine[0];
-                            ArrayList<Boolean> entries = new ArrayList<>();
+                    ArrayList<Map<String, Boolean>> dataset = Helper.testToList(args[1]);
+                    int correctPredictions = 0;
 
-                            for (int i = 1; i < 16; i++) {
-                                entries.add(Boolean.parseBoolean(splitLine[i]));
+                    for (Map<String, Boolean> instance : dataset) {
+                        Node node = root;
+                        //Traverse down to leaf node
+                        while (!(node instanceof LeafNode)) {
+                            DecisionNode currentNode = (DecisionNode) node;
+                            if (instance.get(currentNode.getBestAttribute())) {
+                                node = currentNode.getLeft();
                             }
-
-                            //TODO compare it with tree
-                            //TODO read next line
-                            //TODO or add to big list and read at once
-                            //TODO print output
+                            else {
+                                node = currentNode.getRight();
+                            }
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                        LeafNode cat = (LeafNode) node;
+                        String predict = cat.getCat();
+
+                        //If category is true then actual cat is live
+                        if (instance.get("Category")) {
+                            if (predict.equals(categoryNames.get(0))){
+                                correctPredictions++;
+                            }
+                        }
+                        //Category is die
+                        else if (!instance.get("Category")) {
+                            if (predict.equals(categoryNames.get(1))){
+                                correctPredictions++;
+                            }
+                        }
                     }
+
+                    System.out.println("Correct predictions: " + correctPredictions + " out of: " + dataset.size() + " for " + args[1]);
                 }
             }
         }

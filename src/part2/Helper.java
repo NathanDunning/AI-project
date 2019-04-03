@@ -1,12 +1,10 @@
 package part2;
 
 import com.sun.media.sound.InvalidDataException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Helper {
@@ -40,36 +38,58 @@ public class Helper {
         }
     }
 
-    protected static BufferedReader testDataReader(String filename) {
+    protected static ArrayList testToList(String filename) {
+        ArrayList<Map<String, Boolean>> testSet = new ArrayList<>();
         try {
+            String[] attributeNames = null;
+            String[] categoryNames = null;
             BufferedReader in = new BufferedReader(new FileReader("./data/part2/" + filename));
             String s = in.readLine();
 
             //Checking categories are the same
             if (s != null) {
-                String[] line = s.split("\\t+");
-                assert line[0].equals(DecisionTree.categoryNames.get(0));
-                assert line[1].equals(DecisionTree.categoryNames.get(1));
+                categoryNames = s.split("\\s+");
+                assert categoryNames[0].equals(DecisionTree.categoryNames.get(0));
+                assert categoryNames[1].equals(DecisionTree.categoryNames.get(1));
             }
 
             //Checking attributes are the same
             s = in.readLine();
             if (s != null) {
-                String[] line = s.split("\\t+");
-                assert line.length == DecisionTree.attNames.size();
+                attributeNames = s.split("\\s+");
+                assert attributeNames.length == DecisionTree.attNames.size();
 
                 //Check that categories are the same
-                for (int i = 0; i<line.length; i++) {
-                    assert DecisionTree.attNames.contains(line[i]);
+                for (int i = 0; i < attributeNames.length; i++) {
+                    assert DecisionTree.attNames.contains(attributeNames[i]);
                 }
             }
 
-            return in;
+            //Add to create map of attributes and values and add to map
+            s = in.readLine();
+            while (s != null) {
+                Map<String, Boolean> instance = new HashMap<>();
+                String[] splitLine = s.split("\\s+");
+                String category = splitLine[0];
+                if(category.equals(categoryNames[0])) {
+                    instance.put("Category", true);
+                }
+                else if (category.equals(categoryNames[1])) {
+                    instance.put("Category", false);
+                }
+
+                for (int i = 0; i < 16; i++) {
+                    instance.put(attributeNames[i], Boolean.parseBoolean(splitLine[i+1]));
+                }
+                testSet.add(instance);
+                s = in.readLine();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return testSet;
     }
 
     protected static List<Instance> readInstances(Scanner din){

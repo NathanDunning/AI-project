@@ -11,11 +11,23 @@ public class LeafNode implements Node{
         this.count = count;
     }
 
+    public String getCat() {
+        return cat;
+    }
+
+    public double getProb() {
+        return prob;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
     @Override
     public void report(String indent) {
 
         System.out.format("%sCategory %s, prob =%4.0f%% : /%d\n",
-                indent, cat, prob*100, count);
+                indent, getCat(), getProb()*100, getCount());
 
     }
 
