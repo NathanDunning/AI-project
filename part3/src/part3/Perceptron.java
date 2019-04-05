@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.Random;
 
 public class Perceptron {
-    private static final int MAX_ITERS = 1000;   //Maximum number of iterations allowed
+    private static final int MAX_ITERS = 250;   //Maximum number of iterations allowed
     private static final double LEARNING_RATE = 0.1;
-    private static final double BIAS = 0.5;
+    private static final double BIAS = 1;
+    private static final double PERCENTAGE_CORRECT = 0.98;
 
     private static int featureNum = 50; //Number of features (excluding the bias)
     private static List<Feature> feature;   //All features (featureNum number of features)
@@ -109,6 +110,8 @@ public class Perceptron {
 
         //Setting up perceptron
         buildPerceptron();
+        System.out.println("Max Iterations set to: " +MAX_ITERS + ", Learning Rate Set to: " +LEARNING_RATE +", Bias set to: " + BIAS);
+        System.out.println("Target Accuracy set to: " +PERCENTAGE_CORRECT*100 +"%");
         System.out.println("Initial Weights:");
         printWeights();
 
@@ -121,6 +124,8 @@ public class Perceptron {
         while (true) {
             if (loop == MAX_ITERS) {
                 System.out.println("\n\n");
+                System.out.println("Final Weights:");
+                printWeights();
                 System.out.println("Reached max number or iterations");
                 System.out.println("Best accuracy is " +bestHit +"/" +images.size() + " : " + accuracy + "%");
                 break;
@@ -183,14 +188,16 @@ public class Perceptron {
                 accuracy = ((double) bestHit)/((double) images.size()) * 100;
             }
 
-            if (hit == images.size()) {
+            if (hit == (PERCENTAGE_CORRECT * images.size())) {
                 System.out.println("\n\n");
-                System.out.println("Guessed all images correctly");
-                System.out.println("Took " +loop +" generations");
+                System.out.println("Final Weights:");
+                printWeights();
+                System.out.println("Guessed images correctly with a set accuracy of " + PERCENTAGE_CORRECT*100 +"%");
+                System.out.println("Took " +loop +" loops");
                 System.out.println("Re-trained weights " + train + " times");
                 break;
             }
-            System.out.println("Current hits out of 100: " + hit);
+         //   System.out.println("Current hits out of 100: " + hit);
             loop++;
         }
 
