@@ -40,7 +40,7 @@ public class Helper {
         try {
             String[] attributeNames = null;
             String[] categoryNames = null;
-            BufferedReader in = new BufferedReader(new FileReader("./data/part2/" + filename));
+            BufferedReader in = new BufferedReader(new FileReader(filename));
             String s = in.readLine();
 
             //Checking categories are the same

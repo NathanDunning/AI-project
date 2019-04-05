@@ -9,7 +9,7 @@ public class Helper {
     static List<Image> readData(String filename) {
         List<Image> images = new ArrayList<>();
         try {
-            BufferedReader in = new BufferedReader(new FileReader("./data/part3/" + filename));
+            BufferedReader in = new BufferedReader(new FileReader(filename));
             String currentLine = in.readLine();
 
             while (currentLine != null) {

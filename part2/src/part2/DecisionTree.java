@@ -168,7 +168,7 @@ public class DecisionTree {
         }
         if (args.length == 1) {
             if (args[0].contains("training")){
-                Helper.readDataFile("./data/part2/" + args[0]);
+                Helper.readDataFile(args[0]);
                 root = buildTree(allInstances, attNames);
                 Helper.printTree(root);
             }
@@ -180,7 +180,7 @@ public class DecisionTree {
             if (args[0].contains("training")) {
                 if (args[1].contains("test")) {
                     //Read Training File
-                    Helper.readDataFile("./data/part2/" + args[0]);
+                    Helper.readDataFile(args[0]);
                     root = buildTree(allInstances, attNames);
                     Helper.printTree(root);
                     System.out.println("\n");
