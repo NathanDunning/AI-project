@@ -1,4 +1,4 @@
-# COMP307 Assignment 1
+# Artificial Intelligence Project
 My AI project is written in Java. The way the project is structered is that each folder (part1, part2, part3) are 3 different projects that will have to be opened separately (if opened in IDE). 
 The three parts include the implementation of 
 * K-Nearest Neighbours
